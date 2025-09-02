@@ -22,7 +22,7 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " 通用设置
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let mapleader = ","      " 定义<leader>键
+let mapleader = "\<Space>"      " 定义<leader>键
 set nocompatible         " 设置不兼容原始vi模式
 filetype on              " 设置开启文件类型侦测
 filetype plugin on       " 设置加载对应文件类型的插件
@@ -133,6 +133,8 @@ Plug 'preservim/tagbar'
 Plug 'Valloric/YouCompleteMe'
 Plug 'Yggdroot/LeaderF'
 Plug 'mileszs/ack.vim'
+Plug 'vim-scripts/ag.vim'
+Plug 'jremmen/vim-ripgrep'
 Plug 'easymotion/vim-easymotion'
 Plug 'haya14busa/incsearch.vim'
 Plug 'jiangmiao/auto-pairs'
@@ -160,6 +162,7 @@ Plug 'Shougo/echodoc.vim'
 Plug 'terryma/vim-smooth-scroll'
 Plug 'rhysd/clever-f.vim'
 Plug 'vim-scripts/indentpython.vim'
+Plug 'zivyangll/git-blame.vim'
 
 " 加载自定义插件
 if filereadable(expand($HOME . '/.vimrc.custom.plugins'))
@@ -208,7 +211,7 @@ autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | execute "
 " 主题设置
 set background=dark
 let g:onedark_termcolors=256
-colorscheme onedark
+colorscheme zellner
 
 " airline
 let g:airline_theme="onedark"
@@ -334,7 +337,13 @@ let g:Lf_WildIgnore = {
 let g:Lf_UseCache = 0
 
 " ack
-nnoremap <leader>F :Ack!<space>
+"nnoremap <leader>F :Ack!<space>
+
+" ag
+"nnoremap <leader>F :Ag!<space>
+
+" Rg
+nnoremap <leader>F :Rg<space>
 
 " echodoc.vim
 let g:echodoc_enable_at_startup = 1
@@ -353,6 +362,27 @@ noremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 0, 4)<CR>
 nnoremap <leader>g :GV<cr>
 nnoremap <leader>G :GV!<cr>
 nnoremap <leader>gg :GV?<cr>
+
+" git blame
+nnoremap <Leader>k :<C-u>call gitblame#echo()<CR>
+
+" 最小化，最大化当前窗口
+function! Zoom ()
+    " check if is the zoomed state (tabnumber > 1 && window == 1)
+    if tabpagenr('$') > 1 && tabpagewinnr(tabpagenr(), '$') == 1
+        let l:cur_winview = winsaveview()
+        let l:cur_bufname = bufname('')
+        tabclose
+
+        " restore the view
+        if l:cur_bufname == bufname('')
+            call winrestview(cur_winview)
+        endif
+    else
+       tab split
+    endif
+endfunction
+nnoremap <Leader>z :call Zoom()<cr>
 
 " 加载自定义配置
 if filereadable(expand($HOME . '/.vimrc.custom.config'))
